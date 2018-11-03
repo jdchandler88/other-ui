@@ -112,7 +112,7 @@ export default {
       instance.$mount();
 
       //Create an instance of the JSPanel4 oject that holds the element that was rendered from the instance variable above.
-      //  This will make the popup hold the values and data from the TestApp.vue file. Other properties review values at the 
+      //  This will make the popup hold the values and data from the TestApp.vue file. Other properties review values at the
       //  JSPanel API site.
       this.$panel.create({
         theme: "primary",
