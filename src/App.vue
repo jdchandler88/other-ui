@@ -49,7 +49,6 @@
     </v-toolbar>
     <v-content>
       <v-container fill-height>
-        <!--<ApplicationWindow testc="TestApp"></ApplicationWindow>-->
         <v-layout justify-center align-center>
           <v-flex shrink>
             <v-tooltip right>
@@ -78,7 +77,8 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Vue from "vue";
+import TestApp from "./components/TestApp.vue";
 
 export default {
   data: () => ({
@@ -103,13 +103,23 @@ export default {
   },
   methods: {
     launchApp: function() {
-      this.drawer = !this.drawer;
+      //Wrap the TestApp in a Vue extension. This gives us a constructor for the file as it is not a class in and of itself
+      //  and as such it can not be constructed on it's own. By extending Vue we get vue's constructor to use.
+      var CompClass = Vue.extend(TestApp);
+      //Create an instance of the class we wish to launch.
+      var instance = new CompClass();
+      //The $mount() is used to render what the HTML will look like for the 'Vue class' we want to populate.
+      instance.$mount();
+
+      //Create an instance of the JSPanel4 oject that holds the element that was rendered from the instance variable above.
+      //  This will make the popup hold the values and data from the TestApp.vue file. Other properties review values at the 
+      //  JSPanel API site.
       this.$panel.create({
         theme: "primary",
         headerTitle: "my panel #1",
         position: "center-top 0 58",
         contentSize: "450 250",
-        content: HelloWorld,
+        content: instance.$el,
         callback: function() {
           this.content.style.padding = "20px";
         },
@@ -117,6 +127,9 @@ export default {
           return confirm("Do you really want to close the panel?");
         }
       });
+
+      //Closes the side menu panel.
+      this.drawer = !this.drawer;
     }
   }
 };
