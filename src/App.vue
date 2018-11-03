@@ -1,5 +1,6 @@
 <template>
   <v-app id="inspire" dark>
+    <JsPanel comp="Complex"></JsPanel>
     <v-navigation-drawer v-model="drawer" fixed temporary app>
       <v-list dense>
         <v-subheader class="mt-3 grey--text text--darken-1">APPLICATIONS</v-subheader>
