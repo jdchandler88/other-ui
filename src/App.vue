@@ -3,6 +3,17 @@
     <JsPanel comp="Complex"></JsPanel>
     <v-navigation-drawer v-model="drawer" fixed temporary app>
       <v-list dense>
+        <v-subheader class="mt-3 grey--text text--darken-1">OUR APPLICATIONS</v-subheader>
+        <v-list-tile v-for="item in this.$root.availableApps" :key="item" @click="launchOurApp(item)">
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title :ref="'app-' + item">
+              {{ item }}
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <v-subheader class="mt-3 grey--text text--darken-1">APPLICATIONS</v-subheader>
         <v-list-tile v-for="item in items" :key="item.text" @click="launchApp">
           <v-list-tile-action>
@@ -51,6 +62,7 @@
     <v-content>
       <v-container fill-height>
         <!--<ApplicationWindow testc="TestApp"></ApplicationWindow>-->
+        <JsPanel v-for="app in $root.openApps" v-bind:key="app" :comp="app"></JsPanel>
         <v-layout justify-center align-center>
           <v-flex shrink>
             <v-tooltip right>
@@ -118,7 +130,13 @@ export default {
           return confirm("Do you really want to close the panel?");
         }
       });
+    },
+    launchOurApp(component) {
+        this.drawer = !this.drawer;
+        this.$root.openApps.push(component);
     }
   }
+  
+
 };
 </script>
