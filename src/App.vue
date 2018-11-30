@@ -61,7 +61,9 @@
     <v-content>
       <v-container fill-height>
         <!-- renders a panel for each open app in openapps. does each app need a unique identifier? i dunno --> 
-        <JsPanel v-for="app in $root.openApps" v-bind:key="app" :comp="app"></JsPanel>
+        <JsPanel v-for="app in $root.openApps" :key="app.id" :comp="app.name" :appid="app.id" visible="true" @close="close(app.id)">
+          <component :is="app.name"></component>
+        </JsPanel>
         <v-layout justify-center align-center>
           <v-flex shrink>
             <v-tooltip right>
@@ -109,7 +111,8 @@ export default {
       { picture: 48, text: "Xbox Ahoy" },
       { picture: 58, text: "Nokia" },
       { picture: 78, text: "MKBHD" }
-    ]
+    ],
+    inst: 0
   }),
   props: {
     source: String
@@ -143,7 +146,22 @@ export default {
     },
     launchOurApp(component) {
         this.drawer = !this.drawer;
-        this.$root.openApps.push(component);
+        this.$root.openApps.push(
+          {name: component, id: this.inst++}
+        );
+    },
+    getNextId() {
+      return this.inst++;
+    },
+    close(id) {
+      console.log(id + "closeds");
+      for (var i=0; i<this.$root.openApps.length; i++) {
+        var openApp = this.$root.openApps[i];
+        if (openApp.id === id) {
+          console.log("YAS");
+          this.$root.openApps.splice(i, 1);
+        }
+      }
     }
   }
   
