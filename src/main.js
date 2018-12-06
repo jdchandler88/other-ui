@@ -4,8 +4,6 @@ import "./plugins/vuetify";
 import App from "./App.vue";
 import { jsPanel } from "jspanel4";
 import JsPanel from "./components/JsPanel"
-// import Simple from "./apps/Simple"
-// import Complex from "./apps/Complex"
 
 //globally register jspanel.  this is a 'global' component used everywhere.
 Vue.component("JsPanel", JsPanel);

@@ -2,6 +2,16 @@
   <v-app id="inspire" dark>
     <v-navigation-drawer v-model="drawer" fixed temporary app>
       <v-list dense>
+        <v-subheader class="mt-3 grey--text text--darken-1">App Control</v-subheader>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-btn @click="toggleApps">Toggle Apps: {{ this.isVisible() }}</v-btn>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Toggle Apps</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-subheader class="mt-3 grey--text text--darken-1">OUR APPLICATIONS</v-subheader>
         <v-list-tile v-for="item in this.$root.availableApps" :key="item" @click="launchOurApp(item)">
           <v-list-tile-action>
@@ -10,17 +20,6 @@
           <v-list-tile-content>
             <v-list-tile-title :ref="'app-' + item">
               {{ item }}
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-subheader class="mt-3 grey--text text--darken-1">APPLICATIONS</v-subheader>
-        <v-list-tile v-for="item in items" :key="item.text" @click="launchApp">
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title :ref="'app-' + item.text.toLowerCase().replace(' ', '-')">
-              {{ item.text }}
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -58,12 +57,15 @@
         <v-icon>person</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-content>
+    <v-content> 
       <v-container fill-height>
         <!-- renders a panel for each open app in openapps. does each app need a unique identifier? i dunno --> 
-        <JsPanel v-for="app in $root.openApps" :key="app.id" :comp="app.name" :appid="app.id" visible="true" @close="close(app.id)">
-          <component :is="app.name"></component>
-        </JsPanel>
+        <!-- <div v-if="this.isVisible()"> -->
+          <JsPanel v-for="app in $root.openApps" :key="app.id" :comp="app.name" :appid="app.id" :visible="isVisible()" @close="close(app.id)">
+            <component :is="app.name"></component>
+          </JsPanel>
+        <!-- </div> -->
+        
         <v-layout justify-center align-center>
           <v-flex shrink>
             <v-tooltip right>
@@ -112,38 +114,13 @@ export default {
       { picture: 58, text: "Nokia" },
       { picture: 78, text: "MKBHD" }
     ],
-    inst: 0
+    inst: 0,
+    visible: true
   }),
   props: {
     source: String
   },
   methods: {
-    launchApp: function() {
-      //Wrap the TestApp in a Vue extension. This gives us a constructor for the file as it is not a class in and of itself
-      //  and as such it can not be constructed on it's own. By extending Vue we get vue's constructor to use.
-      var CompClass = Vue.extend(TestApp);
-      //Create an instance of the class we wish to launch.
-      var instance = new CompClass();
-      //The $mount() is used to render what the HTML will look like for the 'Vue class' we want to populate.
-      instance.$mount();
-
-      //Create an instance of the JSPanel4 oject that holds the element that was rendered from the instance variable above.
-      //  This will make the popup hold the values and data from the TestApp.vue file. Other properties review values at the
-      //  JSPanel API site.
-      this.$panel.create({
-        theme: "primary",
-        headerTitle: "my panel #1",
-        position: "center-top 0 58",
-        contentSize: "450 250",
-        content: instance.$el,
-        callback: function() {
-          this.content.style.padding = "20px";
-        },
-        onbeforeclose: function() {
-          return confirm("Do you really want to close the panel?");
-        }
-      });
-    },
     launchOurApp(component) {
         this.drawer = !this.drawer;
         this.$root.openApps.push(
@@ -154,7 +131,7 @@ export default {
       return this.inst++;
     },
     close(id) {
-      console.log(id + "closeds");
+      console.log(id + "closed");
       for (var i=0; i<this.$root.openApps.length; i++) {
         var openApp = this.$root.openApps[i];
         if (openApp.id === id) {
@@ -162,9 +139,13 @@ export default {
           this.$root.openApps.splice(i, 1);
         }
       }
+    },
+    isVisible() {
+      return this.visible;
+    },
+    toggleApps() {
+      this.visible = !this.visible;
     }
   }
-  
-
 };
 </script>

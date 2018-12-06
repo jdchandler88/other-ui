@@ -11,6 +11,12 @@
 import { jsPanel } from 'jspanel4/es6module/jspanel.min.js'
 export default {
   name: 'JsPanel',
+  data: function() {
+    return {
+      jspanel: null,
+      hiding: false
+    };
+  },
   props: {
     visible: {
       type: Boolean,
@@ -30,6 +36,8 @@ export default {
     visible(isVisible) {
       if (isVisible) {
         this.createPanel()
+      } else {
+        this.hide()
       }
     }
   },
@@ -51,11 +59,16 @@ export default {
           options
         )
       }
-      jsPanel.create(options)
+      this.jspanel = jsPanel.create(options)
     },
     close() {
-      this.$emit('close')
-      this.$emit('update:visible', false)
+      if (this.visible) {
+        this.$emit('close')
+        this.$emit('update:visible', false)
+      }
+    },
+    hide() {
+      this.jspanel.close();
     }
   }
 }
