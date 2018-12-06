@@ -14,7 +14,11 @@ export default {
   data: function() {
     return {
       jspanel: null,
-      hiding: false
+      hiding: false,
+      width: 500,
+      height: 300,
+      left: this.defaultLeft,
+      top: this.defaultTop
     };
   },
   props: {
@@ -30,6 +34,12 @@ export default {
   computed: {
     panelOptions() {
       return Object.assign({ onclosed: this.close }, this.options)
+    },
+    defaultTop() {
+      return window.innerHeight/2;
+    },
+    defaultLeft() {
+      return window.innerWidth/2;
     }
   },
   watch: {
@@ -45,6 +55,12 @@ export default {
     if (this.visible) {
       this.createPanel()
     }
+    document.addEventListener('jspanelresizestop', this.changed);
+    document.addEventListener('jspaneldragstop', this.changed);
+  },
+  destroyed() {
+    document.removeEventListener('jspanelresizestop', this.changed);
+    document.removeEventListener('jspaneldragstop', this.changed);
   },
   methods: {
     async createPanel() {
@@ -59,7 +75,12 @@ export default {
           options
         )
       }
-      this.jspanel = jsPanel.create(options)
+
+      this.jspanel = jsPanel.create(options);
+      this.jspanel.style.width = this.width;
+      this.jspanel.style.height = this.height;
+      this.jspanel.style.top = this.top;
+      this.jspanel.style.left = this.left;
     },
     close() {
       if (this.visible) {
@@ -69,6 +90,16 @@ export default {
     },
     hide() {
       this.jspanel.close();
+    },
+    changed(event) {
+      if (event.detail === this.jspanel.id) {
+        this.width = this.jspanel.style.width;
+        this.height = this.jspanel.style.height;
+        this.top = this.jspanel.style.top;
+        this.left = this.jspanel.style.left;
+        console.log("top", this.top, "left", this.left);
+        console.log("height", this.height, "width", this.width);
+      }
     }
   }
 }
